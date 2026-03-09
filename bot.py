@@ -32,7 +32,7 @@ BASE_OPTS = {
 
 TIKTOK_OPTS = BASE_OPTS.copy()
 TIKTOK_OPTS.update({
-    'cookiefile': COOKIES_FILE,
+    'cookiefile':  tiktok_cookies.txt,
     'headers': {
         'User-Agent': 'Mozilla/5.0'
     }
