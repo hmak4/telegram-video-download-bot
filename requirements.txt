@@ -1,3 +1,4 @@
 yt-dlp>=2023.12.30
 python-telegram-bot>=20.0
 curl_cffi>=0.5.10
+ffmpeg-python
