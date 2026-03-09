@@ -11,13 +11,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = os.getenv("8538615381:AAE_-uK9Tnu_QgC_5Tz6QhsruBZCYKULlV8")
+# Telegram Bot Token
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
+# Download folder
 DOWNLOAD_PATH = "./downloads"
 os.makedirs(DOWNLOAD_PATH, exist_ok=True)
 
-COOKIES_FILE = "tiktok_cookies.txt"
+# Cookies files
+TIKTOK_COOKIES = "tiktok_cookies.txt"
+YOUTUBE_COOKIES = "youtube_cookies.txt"
 
+# Base yt-dlp options
 BASE_OPTS = {
     'format': 'best[ext=mp4]/best',
     'outtmpl': os.path.join(DOWNLOAD_PATH, '%(title)s.%(ext)s'),
@@ -30,24 +35,31 @@ BASE_OPTS = {
     'nocheckcertificate': True,
 }
 
+# TikTok options
 TIKTOK_OPTS = BASE_OPTS.copy()
 TIKTOK_OPTS.update({
-    'cookiefile': 'tiktok_cookies.txt'
+    'cookiefile': TIKTOK_COOKIES,
     'headers': {
         'User-Agent': 'Mozilla/5.0'
     }
 })
 
+# YouTube options
+YOUTUBE_OPTS = BASE_OPTS.copy()
+YOUTUBE_OPTS.update({
+    'cookiefile': YOUTUBE_COOKIES
+})
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👋 স্বাগতম!\n"
-        "ভিডিও লিংক পাঠান (TikTok / YouTube / Facebook / Instagram)"
+        "TikTok / YouTube / Facebook / Instagram ভিডিও লিংক পাঠান"
     )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
 
-    urls = [word for word in text.split() if word.startswith(('http://', 'https://'))]
+    text = update.message.text
+    urls = [w for w in text.split() if w.startswith(("http://","https://"))]
 
     if not urls:
         await update.message.reply_text("❌ কোনো URL পাওয়া যায়নি")
@@ -55,35 +67,48 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     url = urls[0]
 
-    await update.message.reply_text("⏳ ডাউনলোড হচ্ছে...")
+    await update.message.reply_text("⏳ ভিডিও ডাউনলোড হচ্ছে...")
 
-    if 'tiktok.com' in url:
+    # platform detect
+    if "tiktok.com" in url:
         opts = TIKTOK_OPTS.copy()
+
+    elif "youtube.com" in url or "youtu.be" in url:
+        opts = YOUTUBE_OPTS.copy()
+
+    elif "facebook.com" in url or "fb.watch" in url:
+        opts = BASE_OPTS.copy()
+        opts['headers'] = {'User-Agent': 'Mozilla/5.0'}
+
+    elif "instagram.com" in url:
+        opts = BASE_OPTS.copy()
+
     else:
         opts = BASE_OPTS.copy()
 
     try:
+
         loop = asyncio.get_event_loop()
         filename = await loop.run_in_executor(None, download_video, url, opts)
 
         if not filename or not os.path.exists(filename):
-            raise Exception("ডাউনলোড ব্যর্থ হয়েছে")
+            raise Exception("ভিডিও ডাউনলোড হয়নি")
 
-        size = os.path.getsize(filename) / (1024 * 1024)
+        size = os.path.getsize(filename)/(1024*1024)
 
         if size > 50:
-            await update.message.reply_text("⚠️ ভিডিও 50MB এর বেশি")
+            await update.message.reply_text("⚠️ ভিডিও 50MB এর বেশি তাই পাঠানো যাবে না")
             os.remove(filename)
             return
 
-        with open(filename, 'rb') as f:
+        with open(filename,"rb") as f:
             await update.message.reply_video(f)
 
         os.remove(filename)
 
     except Exception as e:
         logger.error(e)
-        await update.message.reply_text(f"❌ Error:\n{str(e)[:200]}")
+        await update.message.reply_text(f"❌ ডাউনলোড ব্যর্থ হয়েছে\nত্রুটি: {str(e)[:200]}")
 
 def download_video(url, opts):
 
@@ -91,8 +116,8 @@ def download_video(url, opts):
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info)
 
-        if not filename.endswith('.mp4'):
-            filename = filename.rsplit('.', 1)[0] + '.mp4'
+        if not filename.endswith(".mp4"):
+            filename = filename.rsplit(".",1)[0]+".mp4"
 
         return filename
 
