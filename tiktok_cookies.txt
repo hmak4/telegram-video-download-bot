@@ -1,4 +1,4 @@
-Netscape HTTP Cookie File
+# Netscape HTTP Cookie File
 # https://curl.haxx.se/rfc/cookie_spec.html
 # This is a generated file! Do not edit.
 
@@ -47,3 +47,4 @@ www.tiktok.com	FALSE	/	FALSE	1773143991	tt_ticket_guard_has_set_public_key	1
 .tiktok.com	TRUE	/	FALSE	1804593690	odin_tt	a1ff8072d4976da3bf86efefadb230c95027d505d510c45e642bdc1ba64a9b6ca9c845a306980f657ab278a2d5d1d2251662eebbaf2cfc18c1189255e803673c38b628ba46e7f7cda0d6c4a2f423b5be
 www.tiktok.com	FALSE	/	FALSE	1780833705	msToken	_OYmkHzqNG3LHZKYfXqCWot9jauWK7DrGprgRaoH2xV2crbwSjiqXTvUYBCB6ITtMVpQCu2q37i0926-ZbHD-9igHjrZpvIpJthYaJpoXy8asOfsR7Rw1Ahu7Fx0p8V-_lRd-vZhvthd_E5Y0HunHIun9iQ=
 .tiktok.com	TRUE	/	TRUE	1773921721	msToken	MUY4A8-U49GgYnSFgGcJ-gWNlSpt2GGx7B-r9Y6k0Ear5qcChTlPzI1zXnYqMuvtdZyijYpCLsXgUPmPeOfLEF4FQ6FuA32MFEU5E4LtG37_kcWzEfaU2mIHhq5YEHZ0GV_230ECzdD45-Mei8i9l4HVm9M=
+
