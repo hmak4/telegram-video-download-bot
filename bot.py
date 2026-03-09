@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 # Telegram Bot Token
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Download folder
 DOWNLOAD_PATH = "./downloads"
 os.makedirs(DOWNLOAD_PATH, exist_ok=True)
 
@@ -22,7 +21,6 @@ os.makedirs(DOWNLOAD_PATH, exist_ok=True)
 TIKTOK_COOKIES = "tiktok_cookies.txt"
 YOUTUBE_COOKIES = "youtube_cookies.txt"
 
-# Base yt-dlp options
 BASE_OPTS = {
     'format': 'best[ext=mp4]/best',
     'outtmpl': os.path.join(DOWNLOAD_PATH, '%(title)s.%(ext)s'),
@@ -30,35 +28,40 @@ BASE_OPTS = {
     'quiet': True,
     'no_warnings': True,
     'socket_timeout': 30,
-    'retries': 5,
-    'fragment_retries': 5,
+    'retries': 10,
+    'fragment_retries': 10,
     'nocheckcertificate': True,
 }
 
-# TikTok options
 TIKTOK_OPTS = BASE_OPTS.copy()
 TIKTOK_OPTS.update({
     'cookiefile': TIKTOK_COOKIES,
-    'headers': {
-        'User-Agent': 'Mozilla/5.0'
-    }
+    'headers': {'User-Agent': 'Mozilla/5.0'}
 })
 
-# YouTube options
 YOUTUBE_OPTS = BASE_OPTS.copy()
 YOUTUBE_OPTS.update({
-    'cookiefile': YOUTUBE_COOKIES
+    'cookiefile': YOUTUBE_COOKIES,
+    'extractor_args': {'youtube': {'player_client': ['android']}},
+    'headers': {'User-Agent': 'Mozilla/5.0'}
 })
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text(
-        "👋 স্বাগতম!\n"
-        "TikTok / YouTube / Facebook / Instagram ভিডিও লিংক পাঠান"
+        "👋 স্বাগতম!\n\n"
+        "এই বট দিয়ে ভিডিও ডাউনলোড করা যাবে:\n"
+        "• TikTok\n"
+        "• YouTube\n"
+        "• Facebook\n"
+        "• Instagram\n\n"
+        "একটা ভিডিও লিংক পাঠান।"
     )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
+
     urls = [w for w in text.split() if w.startswith(("http://","https://"))]
 
     if not urls:
@@ -69,7 +72,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text("⏳ ভিডিও ডাউনলোড হচ্ছে...")
 
-    # platform detect
     if "tiktok.com" in url:
         opts = TIKTOK_OPTS.copy()
 
