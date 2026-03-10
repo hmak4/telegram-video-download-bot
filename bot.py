@@ -12,7 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Telegram Bot Token
-BOT_TOKEN = os.getenv("BOT_TOKEN_1")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 DOWNLOAD_PATH = "./downloads"
 os.makedirs(DOWNLOAD_PATH, exist_ok=True)
