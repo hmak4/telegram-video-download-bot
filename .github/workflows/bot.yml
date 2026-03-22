@@ -1,4 +1,4 @@
-name: Telegram Downlode Bot
+name: Telegram Downlode bot
 
 on:
   push:
